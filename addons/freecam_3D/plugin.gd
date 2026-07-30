@@ -17,4 +17,3 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	remove_custom_type("Freecam3D")
-

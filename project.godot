@@ -18,6 +18,10 @@ config/icon="res://icon.svg"
 
 Draw3D="*res://Draw3D.gd"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/freecam_3D/plugin.cfg")
+
 [input]
 
 speed_up={
