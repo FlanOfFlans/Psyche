@@ -1,0 +1,71 @@
+[gd_scene load_steps=3 format=3 uid="uid://wpvdq0a2yf6t"]
+
+[ext_resource type="Script" path="res://addons/freecam_3D/freecam.gd" id="1_p18lu"]
+
+[sub_resource type="GDScript" id="GDScript_aprup"]
+script/source = "extends Node3D
+
+@export var fast_forward_factor: float = 2.0;
+@export var start_pos: Vector3;
+@export var rho: float;
+@export var sigma: float;
+@export var beta: float;
+
+var pos: Vector3;
+var speed_up: bool = false;
+var base_physics_ticks: int;
+var base_timescale: float;
+
+var lines: Array[MeshInstance3D] = [];
+
+func _ready() -> void:
+	pos = start_pos;
+	base_physics_ticks = Engine.physics_ticks_per_second;
+	base_timescale = Engine.time_scale;
+
+func _process(delta: float) -> void:
+	if Input.is_action_just_pressed(\"speed_up\"):
+		if speed_up:
+			speed_up = false;
+			Engine.physics_ticks_per_second = base_physics_ticks;
+			Engine.time_scale = base_timescale;
+		
+		else:
+			speed_up = true;
+			Engine.physics_ticks_per_second = base_physics_ticks * fast_forward_factor;
+			Engine.time_scale = base_timescale * fast_forward_factor;
+	
+	if Input.is_action_just_pressed(\"reset\"):
+		for line in lines:
+			line.queue_free();
+		lines = [];
+		pos = start_pos;
+		
+
+func _physics_process(delta: float) -> void:
+	var new_pos = calculate_next_step(delta);
+	draw_line(pos, new_pos);
+	pos = new_pos;
+
+func draw_line(pos, new_pos):
+	lines.append(await Draw3D.line(pos, new_pos, Color.GOLD, 0));
+
+func calculate_next_step(delta):
+	var dx = sigma*(pos.y - pos.x);
+	var dy = pos.x*(rho - pos.z) - pos.y;
+	var dz = pos.x * pos.y - beta * pos.z;
+	var new_pos = Vector3(pos.x + dx * delta, pos.y + dy * delta, pos.z + dz * delta);
+	
+	return new_pos;
+"
+
+[node name="Node3D" type="Node3D"]
+script = SubResource("GDScript_aprup")
+start_pos = Vector3(1, 0, 0)
+rho = 28.0
+sigma = 10.0
+beta = 2.667
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 107.109)
+script = ExtResource("1_p18lu")

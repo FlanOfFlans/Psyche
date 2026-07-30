@@ -1,0 +1,13 @@
+ea4bc82a6ad023ab7ee23ee620429895
+::res://::1785453270
+Draw3D.gd::GDScript::-1::1785446596::0::1::::<>Node<>::
+icon.svg::CompressedTexture2D::4815497924217025287::1785445654::1785445671::1::::<><>::
+line_drawing.gd::GDScript::-1::1785446117::0::1::::LineDrawer<>Node<>::
+node_3d.tscn::PackedScene::1576401519608163445::1785452405::0::1::::<><>::res://addons/freecam_3D/freecam.gd
+README.md::TextFile::-1::1785453143::0::1::::<><>::
+::res://addons/::1785453166
+::res://addons/freecam_3D/::1785453166
+freecam.gd::GDScript::-1::1785447731::0::1::::Freecam3D<>Camera3D<>::
+mc-camera2.png::CompressedTexture2D::6829481640343071396::1741124223::1785447544::1::::<><>::
+plugin.cfg::TextFile::-1::1741124223::0::1::::<><>::
+plugin.gd::GDScript::-1::1741124223::0::1::::<>EditorPlugin<>::
