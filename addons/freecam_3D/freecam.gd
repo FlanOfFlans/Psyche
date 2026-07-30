@@ -9,6 +9,7 @@ class_name Freecam3D
 ## Usage: Run your game, press <TAB> and fly around freely. Uses Minecraft-like controls.
 ##
 
+@export var roll_speed: float = 0.01;
 ## Customize your own toggle key to avoid collisions with your current mappings.
 @export var toggle_key: Key = KEY_TAB
 ## Speed up / down by scrolling the mouse whell down / up
@@ -16,8 +17,6 @@ class_name Freecam3D
 
 @export var overlay_text: bool = true
 
-## Pivot node for camera looking around
-@onready var pivot := Node3D.new()
 ## Main parent for camera overlay.
 @onready var screen_overlay := VBoxContainer.new()
 ## Container for the chat-like event log.
@@ -43,11 +42,6 @@ var velocity := Vector3.ZERO
 
 ## Sets up pivot and UI overlay elements.
 func _setup_nodes() -> void:
-	self.add_sibling(pivot)
-	pivot.position = position
-	pivot.rotation = rotation
-	pivot.name = "FreecamPivot"
-	self.reparent(pivot)
 	self.position = Vector3.ZERO
 	self.rotation = Vector3.ZERO
 	# UI stuff
@@ -80,18 +74,26 @@ func _process(delta: float) -> void:
 		if Input.is_action_pressed("__debug_camera_down"): 		dir.y -= 1
 		
 		dir = dir.normalized()
-		dir = dir.rotated(Vector3.UP, pivot.rotation.y)
+		dir = basis * dir;
 		
 		velocity = lerp(velocity, dir * target_speed, ACCELERATION)
-		pivot.position += velocity
+		
+		if Input.is_action_pressed("__debug_camera_roll_left"):
+			rotate_object_local(Vector3.FORWARD, -roll_speed);
+		
+		if Input.is_action_pressed("__debug_camera_roll_right"):
+			rotate_object_local(Vector3.FORWARD, roll_speed);
+						
+		rotation.x = clamp(rotation.x, -PI/2, PI/2)
+		position += velocity
 
 
 func _input(event: InputEvent) -> void:
 	if movement_active:
 		# Turn around
 		if event is InputEventMouseMotion:
-			pivot.rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
-			rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
+			rotate_object_local(Vector3.UP, -event.relative.x * MOUSE_SENSITIVITY);
+			rotate_object_local(Vector3.RIGHT, -event.relative.y * MOUSE_SENSITIVITY)
 			rotation.x = clamp(rotation.x, -PI/2, PI/2)
 		
 		var speed_up = func():
@@ -134,7 +136,8 @@ func _add_keybindings() -> void:
 	if "__debug_camera_up" 		not in actions: _add_key_input_action("__debug_camera_up", KEY_SPACE)
 	if "__debug_camera_down" 	not in actions: _add_key_input_action("__debug_camera_down", KEY_SHIFT)
 	if "__debug_camera_toggle" 	not in actions: _add_key_input_action("__debug_camera_toggle", toggle_key)
-
+	if "__debug_camera_roll_left" not in actions: _add_key_input_action("__debug_camera_roll_left", KEY_Q)
+	if "__debug_camera_roll_right" not in actions: _add_key_input_action("__debug_camera_roll_right", KEY_E)
 
 func _add_key_input_action(name: String, key: Key) -> void:
 	var ev = InputEventKey.new()
