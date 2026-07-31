@@ -42,8 +42,6 @@ var velocity := Vector3.ZERO
 
 ## Sets up pivot and UI overlay elements.
 func _setup_nodes() -> void:
-	self.position = Vector3.ZERO
-	self.rotation = Vector3.ZERO
 	# UI stuff
 	screen_overlay.add_theme_constant_override("Separation", 8)
 	self.add_child(screen_overlay)

@@ -90,12 +90,12 @@ func calculate_next_step(delta):
 	return new_pos;
 "
 
-[sub_resource type="Environment" id="Environment_1g5x7"]
-ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 16.0
+[sub_resource type="Environment" id="Environment_om621"]
+background_mode = 1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6f61q"]
 shading_mode = 0
+albedo_color = Color(1, 0.843, 0, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_14qty"]
 material = SubResource("StandardMaterial3D_6f61q")
@@ -119,13 +119,9 @@ sigma = 10.0
 beta = 2.667
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 107.109)
-environment = SubResource("Environment_1g5x7")
+transform = Transform3D(-0.486221, -0.026926, -0.873421, -0.873421, 0.0457741, 0.48481, 0.0269261, 0.998589, -0.045774, -50, 37, 26)
+environment = SubResource("Environment_om621")
 script = ExtResource("1_p18lu")
-
-[node name="OmniLight3D" type="OmniLight3D" parent="Camera3D"]
-omni_range = 1e+10
-omni_attenuation = 0.0
 
 [node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="."]
 unique_name_in_owner = true
