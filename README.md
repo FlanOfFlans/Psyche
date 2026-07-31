@@ -1,8 +1,13 @@
 # Psyche
 
+<div align=center>
+  <video src=https://github.com/user-attachments/assets/f3e62286-e5de-47bc-b90f-b0fa6c920fbb>
+</div>
+
 Real-time Lorenz System simulation in Godot. Make your very own strange attractors at home!
 
 3D drawing modified from https://github.com/Ryan-Mirch/Line-and-Sphere-Drawing
+
 Freecam modified from https://godotengine.org/asset-library/asset/1803
 
 Built in Godot 4.3.stable
