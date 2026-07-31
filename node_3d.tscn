@@ -50,36 +50,43 @@ func _physics_process(delta: float) -> void:
 	pos = new_pos;
 
 func draw_line(pos, new_pos):
-	if (line_count >= multimesh.multimesh.instance_count):
-		print(\"Increasing mesh instance size\");
-		var transforms = [];
-		for i in line_count:
-			transforms.append(multimesh.multimesh.get_instance_transform(i));
-		multimesh.multimesh.instance_count *= 2;
-		for i in line_count:
-			multimesh.multimesh.set_instance_transform(i, transforms[i]);
+	var multimesh_size = multimesh.multimesh.instance_count; 
+	if (line_count >= multimesh_size):
+		resize_multimesh(multimesh_size * 2, line_count)
 		
-	
-	var mid_pos = (new_pos + pos) / 2.0;
-
-	var current_dir = Vector3.UP;
-	
-	var perpendicular = new_pos.cross(Vector3.UP);
-	if perpendicular.length() == 0:
-		perpendicular = new_pos.cross(Vector3.RIGHT);
-	
-	var transform = Transform3D().looking_at(new_pos - pos, perpendicular);
-	transform = transform.rotated_local(Vector3.RIGHT, PI/2.0);
-	transform = transform.translated(mid_pos);
-
-	transform = transform.scaled_local(Vector3.UP * pos.distance_to(new_pos) + Vector3(1, 0, 1));
-	
-	
+	var transform = get_cylinder_transform(new_pos, pos);
 	multimesh.multimesh.set_instance_transform(line_count, transform);
-	#lines.append(await Draw3D.line(pos, new_pos, Color.GOLD, 0));
 	
 	multimesh.multimesh.visible_instance_count += 1;
 	line_count += 1;
+
+func resize_multimesh(new_size, current_instance):
+	var transforms = [];
+	for i in range(min(new_size, current_instance)):
+		transforms.append(multimesh.multimesh.get_instance_transform(i));
+		
+	multimesh.multimesh.instance_count = new_size;
+
+	for i in range(min(new_size, current_instance)):
+		multimesh.multimesh.set_instance_transform(i, transforms[i]);
+		
+func get_cylinder_transform(new_pos, old_pos) -> Transform3D:
+	# Translate to halfway between new_pos and old_pos
+	var mid_pos = (new_pos + old_pos) / 2.0;
+
+	# Point top towards new_pos
+	var perpendicular = new_pos.cross(Vector3.UP);
+	# On the off chance it's perfectly parallel
+	if perpendicular.length() == 0:
+		perpendicular = new_pos.cross(Vector3.RIGHT);
+	var transform = Transform3D().looking_at(new_pos - old_pos, perpendicular);
+	transform = transform.rotated_local(Vector3.RIGHT, PI/2.0);
+	transform = transform.translated(mid_pos);
+
+	# Scale so it overlaps new_pos and old_pos
+	transform = transform.scaled_local(Vector3.UP * old_pos.distance_to(new_pos) + Vector3(1, 0, 1));
+	
+	return transform;
 
 func calculate_next_step(delta):
 	var dx = sigma*(pos.y - pos.x);
