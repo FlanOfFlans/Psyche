@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://wpvdq0a2yf6t"]
+[gd_scene load_steps=8 format=3 uid="uid://wpvdq0a2yf6t"]
 
 [ext_resource type="Script" path="res://addons/freecam_3D/freecam.gd" id="1_p18lu"]
+[ext_resource type="PackedScene" uid="uid://dde6qiulq0asg" path="res://UI/VariableEntry.tscn" id="2_xbc4r"]
 
 [sub_resource type="GDScript" id="GDScript_aprup"]
 script/source = "extends Node3D
@@ -95,6 +96,25 @@ func calculate_next_step(delta):
 	var new_pos = Vector3(pos.x + dx * delta, pos.y + dy * delta, pos.z + dz * delta);
 	
 	return new_pos;
+
+
+func _on_rho_update(value: Variant) -> void:
+	rho = type_convert(value, TYPE_FLOAT);
+
+func _on_sigma_update(value: Variant) -> void:
+	sigma = type_convert(value, TYPE_FLOAT);
+	
+func _on_beta_update(value: Variant) -> void:
+	beta = type_convert(value, TYPE_FLOAT);
+	
+func _on_x_update(value: Variant) -> void:
+	start_pos.x = type_convert(value, TYPE_FLOAT);
+	
+func _on_y_update(value: Variant) -> void:
+	start_pos.y = type_convert(value, TYPE_FLOAT);
+	
+func _on_z_update(value: Variant) -> void:
+	start_pos.z = type_convert(value, TYPE_FLOAT);
 "
 
 [sub_resource type="Environment" id="Environment_om621"]
@@ -133,3 +153,71 @@ script = ExtResource("1_p18lu")
 [node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="."]
 unique_name_in_owner = true
 multimesh = SubResource("MultiMesh_8v2g4")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="TabContainer" type="TabContainer" parent="CanvasLayer"]
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -267.0
+grow_horizontal = 0
+grow_vertical = 2
+current_tab = 0
+
+[node name="Parameters" type="VBoxContainer" parent="CanvasLayer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Panel" parent="CanvasLayer/TabContainer/Parameters" instance=ExtResource("2_xbc4r")]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+starting_value = "28"
+
+[node name="Panel2" parent="CanvasLayer/TabContainer/Parameters" instance=ExtResource("2_xbc4r")]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+label = "σ"
+starting_value = "10"
+
+[node name="Panel3" parent="CanvasLayer/TabContainer/Parameters" instance=ExtResource("2_xbc4r")]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+label = "β"
+starting_value = "2.667"
+
+[node name="Panel4" parent="CanvasLayer/TabContainer/Parameters" instance=ExtResource("2_xbc4r")]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+label = "x_0"
+starting_value = "1"
+
+[node name="Panel5" parent="CanvasLayer/TabContainer/Parameters" instance=ExtResource("2_xbc4r")]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+label = "y_0"
+starting_value = "1"
+
+[node name="Panel6" parent="CanvasLayer/TabContainer/Parameters" instance=ExtResource("2_xbc4r")]
+custom_minimum_size = Vector2(0, 75)
+layout_mode = 2
+label = "z_0"
+starting_value = "1"
+
+[node name="Display" type="VBoxContainer" parent="CanvasLayer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="BoxContainer" type="BoxContainer" parent="CanvasLayer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[connection signal="variable_updated" from="CanvasLayer/TabContainer/Parameters/Panel" to="." method="_on_rho_update"]
+[connection signal="variable_updated" from="CanvasLayer/TabContainer/Parameters/Panel2" to="." method="_on_sigma_update"]
+[connection signal="variable_updated" from="CanvasLayer/TabContainer/Parameters/Panel3" to="." method="_on_beta_update"]
+[connection signal="variable_updated" from="CanvasLayer/TabContainer/Parameters/Panel4" to="." method="_on_x_update"]
+[connection signal="variable_updated" from="CanvasLayer/TabContainer/Parameters/Panel5" to="." method="_on_y_update"]
+[connection signal="variable_updated" from="CanvasLayer/TabContainer/Parameters/Panel6" to="." method="_on_z_update"]

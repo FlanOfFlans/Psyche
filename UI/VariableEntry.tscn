@@ -1,0 +1,107 @@
+[gd_scene load_steps=5 format=3 uid="uid://dde6qiulq0asg"]
+
+[ext_resource type="Script" path="res://UI/variable_entry.gd" id="1_pcqw2"]
+
+[sub_resource type="GDScript" id="GDScript_s537f"]
+script/source = "extends Panel
+
+signal variable_updated(value);
+signal set_entry(value);
+
+@export var label: String:
+	get: return label;
+	set(value):
+		label = value;
+		if not is_node_ready(): return;
+		%Label.text = value;
+
+@export var starting_value: String;
+
+@export var rule: String:
+	get: return rule;
+	set(value):
+		rule = value;
+		if not is_node_ready(): return;
+		%VariableEntry.rule = value;
+
+@export var error_message: String:
+	get: return error_message
+	
+func _ready():
+	%Label.text = label;
+	%VariableEntry.rule = rule;
+	variable_updated.emit(starting_value);
+	set_entry.emit(starting_value);
+
+func on_variable_update(value):
+	variable_updated.emit(value);
+"
+
+[sub_resource type="GDScript" id="GDScript_dss8w"]
+script/source = "extends Label
+
+func update_error(error_value):
+	if not error_value:
+		remove_theme_color_override(\"font_color\");
+	else:
+		add_theme_color_override(\"font_color\", Color.RED);
+"
+
+[sub_resource type="GDScript" id="GDScript_rcmi7"]
+script/source = "extends Label
+
+func update_error(error_value: bool):
+	visible = error_value;
+"
+
+[node name="Panel" type="Panel"]
+offset_right = 200.0
+offset_bottom = 75.0
+script = SubResource("GDScript_s537f")
+label = "ρ"
+rule = "value.is_valid_float()"
+error_message = "Must be a number"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.25
+horizontal_alignment = 1
+vertical_alignment = 1
+script = SubResource("GDScript_dss8w")
+
+[node name="VariableEntry" type="LineEdit" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+script = ExtResource("1_pcqw2")
+
+[node name="Error" type="Label" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+text = "Must be whole number"
+horizontal_alignment = 1
+vertical_alignment = 2
+script = SubResource("GDScript_rcmi7")
+
+[connection signal="set_entry" from="." to="VBoxContainer/HBoxContainer/VariableEntry" method="_on_panel_set_entry"]
+[connection signal="error_updated" from="VBoxContainer/HBoxContainer/VariableEntry" to="VBoxContainer/HBoxContainer/Label" method="update_error"]
+[connection signal="error_updated" from="VBoxContainer/HBoxContainer/VariableEntry" to="VBoxContainer/Error" method="update_error"]
+[connection signal="text_changed" from="VBoxContainer/HBoxContainer/VariableEntry" to="VBoxContainer/HBoxContainer/VariableEntry" method="on_update" unbinds=1]
+[connection signal="variable_updated" from="VBoxContainer/HBoxContainer/VariableEntry" to="." method="on_variable_update"]
