@@ -5,6 +5,8 @@ Real-time Lorenz System simulation in Godot. Make your very own strange attracto
 3D drawing modified from https://github.com/Ryan-Mirch/Line-and-Sphere-Drawing
 Freecam modified from https://godotengine.org/asset-library/asset/1803
 
+Built in Godot 4.3.stable
+
 ## Controls
 Tab: Toggle freecam
 
